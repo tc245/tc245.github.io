@@ -1,0 +1,12 @@
+---
+import LearningLayout from '../../../../layouts/LearningLayout.astro';
+import Icon from '../../../../components/Icon.astro';
+import { foodStudies, foodAnalysis } from '../../../../lib/food-evidence';
+export function getStaticPaths() { return foodStudies.map(study=>({params:{id:study.id},props:{study}})); }
+const { study } = Astro.props;
+---
+<LearningLayout title={`Trial ${study.id.slice(2,4)}: synthetic source and extraction`} section="effects" intro="Methods and extracted counts for one fabricated trial. No underlying real publication, organisation or participants exist.">
+  <a class="back-link" href="/learning/food-access/effects/">← Back to the effect explorer</a>
+  <div class="learning-two-col learning-section"><section><h2>{study.name}</h2><dl class="study-extraction"><div><dt>Design</dt><dd>{study.design}</dd></div><div><dt>Setting</dt><dd>{study.setting}</dd></div><div><dt>Population</dt><dd>{study.population}</dd></div><div><dt>Intervention</dt><dd>{study.intervention}</dd></div><div><dt>Comparison</dt><dd>{study.comparator}</dd></div><div><dt>Outcome and follow-up</dt><dd>{foodAnalysis.outcome}</dd></div></dl></section><aside class="question-facts"><p class="eyebrow">Calculated from these counts</p><dl><div><dt>Intervention arm</dt><dd>{study.interventionEvents} purchases / {study.interventionTotal} households</dd></div><div><dt>Control arm</dt><dd>{study.controlEvents} purchases / {study.controlTotal} households</dd></div><div><dt>Risk ratio</dt><dd>{study.effect.rr.toFixed(3)} (95% CI {study.effect.ciLow.toFixed(3)}–{study.effect.ciHigh.toFixed(3)})</dd></div><div><dt>Example risk-of-bias judgement</dt><dd>{study.riskOfBias.replaceAll('-',' ')} — {study.biasReason}</dd></div></dl></aside></div>
+  <div class="learning-notice"><Icon name="info"/><div><strong>Synthetic counts, reproducible calculation.</strong><p>Risk ratio = (intervention purchases / intervention households) ÷ (control purchases / control households). Confidence limits use the log risk ratio and its standard error. Trials are individually randomised fictional household comparisons, not cluster-randomised shop evaluations.</p></div></div><div class="learning-endlinks"><a href="/data/food-analysis.json" download>Download counts, estimates and methods <Icon name="download" size={17}/></a></div>
+</LearningLayout>

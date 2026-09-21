@@ -1,0 +1,16 @@
+{$DEMO_HOST:localhost} {
+	root * /srv
+	encode zstd gzip
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		# Production scripts and styles are external, same-origin build assets.
+		Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'"
+	}
+	try_files {path} {path}/index.html =404
+	file_server
+	handle_errors {
+		rewrite * /404.html
+		file_server
+	}
+}

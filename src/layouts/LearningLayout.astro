@@ -1,0 +1,18 @@
+---
+import Layout from './Layout.astro';
+import '../styles/learning.css';
+interface Props { title: string; section?: string; intro?: string; }
+const { title, section = 'overview', intro } = Astro.props;
+const tabs = [
+  ['overview', 'Overview', '/learning/food-access/'],
+  ['effects', 'Effects', '/learning/food-access/effects/'],
+  ['context', 'Context & equity', '/learning/food-access/context/'],
+  ['confidence', 'Confidence', '/learning/food-access/confidence/'],
+  ['scenario', 'Scenario lab', '/learning/food-access/scenario/'],
+];
+---
+<Layout title={title} active="learning" description="A synthetic food-access worked example: evidence synthesis, meta-analysis, context and an exploratory household scenario model.">
+  <section class="learning-intro"><div class="container"><div class="learning-breadcrumb"><a href="/">Hub demo</a><span aria-hidden="true">/</span><span>Worked learning question 01</span></div><p class="eyebrow">Children’s Health and Food · Illustrative question</p><h1>{title}</h1>{intro && <p class="learning-description">{intro}</p>}<div class="learning-status"><span class="status-pill">Synthetic evidence</span><span>6 fictional trials</span><span>1 exploratory model</span></div></div></section>
+  <div class="learning-navigation"><nav class="container learning-tabs" aria-label="Worked example">{tabs.map(([key,label,url])=><a href={url} aria-current={section === key ? 'page' : undefined}>{label}</a>)}</nav></div>
+  <div class="container learning-body"><slot /></div>
+</Layout>

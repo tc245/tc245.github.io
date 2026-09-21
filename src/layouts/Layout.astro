@@ -1,0 +1,41 @@
+---
+import '../styles/global.css';
+import Icon from '../components/Icon.astro';
+interface Props { title: string; description?: string; active?: string; }
+const { title, description = 'Explore a fictional evidence library and map: a concept demonstrator for a proposed Community Evidence Hub.', active = '' } = Astro.props;
+---
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#173f35" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title} · Community Evidence</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="demo-banner"><div class="container banner-inner"><span class="demo-tag">Concept demo</span><span>All evidence records are fictional. <a href="/about/#demo">About this demonstration <span aria-hidden="true">↗</span></a></span></div></div>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="/" aria-label="Community Evidence home">
+          <span class="brand-symbol" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span><strong>Community Evidence</strong><small>A Hub concept</small></span>
+        </a>
+        <nav aria-label="Main navigation">
+          <a href="/learning/food-access/" aria-current={active === 'learning' ? 'page' : undefined}>Worked example</a>
+          <a href="/evidence/" aria-current={active === 'library' ? 'page' : undefined}>Evidence library</a>
+          <a href="/map/" aria-current={active === 'map' ? 'page' : undefined}>Evidence map</a>
+          <a href="/about/" aria-current={active === 'about' ? 'page' : undefined}>About the Hub</a>
+        </nav>
+      </div>
+    </header>
+    <main id="main" tabindex="-1"><slot /></main>
+    <footer class="site-footer">
+      <div class="container footer-top"><div><span class="eyebrow">Explore the concept demo</span><h2>Browse the records.<br />Read the context.</h2></div><div class="footer-links"><a href="/evidence/">Explore the library <Icon /></a><a href="/map/">See the evidence map <Icon /></a><a href="/about/#updating">How the Hub is updated <Icon /></a></div></div>
+      <div class="container footer-bottom"><p>University of Edinburgh · Concept demonstrator</p><p>All records are fictional. This is not an official website.</p></div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,40 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Icon from '../../components/Icon.astro';
+import EvidenceCard from '../../components/EvidenceCard.astro';
+import { publicRecords } from '../../lib/evidence';
+import { TYPES, THEMES, PLACES, POPULATIONS, STRENGTHS, labelFor } from '../../lib/catalogue';
+export function getStaticPaths() { return publicRecords.map(record => ({ params: {id:record.id}, props: {record} })); }
+const { record } = Astro.props;
+const title = record.title.replace(/^Illustrative:\s*/i, '');
+const related = publicRecords.filter(r => r.id !== record.id && r.themes.some(t=>record.themes.includes(t))).slice(0,2);
+---
+<Layout title={title} active="library">
+  <div class="container record-top"><a class="back-link" data-back href="/evidence/"><span aria-hidden="true">←</span> <span data-back-label>Back to the evidence library</span></a></div>
+  <section class="container record-heading"><div class="card-meta"><span class={`type-label type-${record.evidenceType}`}><span class="type-dot"></span>{labelFor(TYPES,record.evidenceType)}</span><span>{record.year} <span aria-hidden="true">·</span> Fictional example</span></div><h1>{title}<span class="title-dot">.</span></h1><div class="record-theme-links">{record.themes.map(t=><a href={`/evidence/?theme=${t}`}>{labelFor(THEMES,t)} <span aria-hidden="true">↗</span></a>)}</div></section>
+  <div class="container record-layout"><div class="record-main">
+    <div class="fiction-notice"><Icon name="info" size={20}/><p><strong>This is a fictional demonstration record.</strong> Its findings, people, methods and organisations are invented to show how evidence could be presented. It is not research or advice.</p></div>
+    <section class="record-section"><p class="eyebrow">The short version</p><h2>What does this tell us?</h2><p class="record-summary">{record.summary}</p></section>
+    <section class="record-section"><h2>Illustrative findings</h2><ul class="finding-list">{record.findings.map(finding=><li><Icon name="arrow" size={19}/><span>{finding}</span></li>)}</ul></section>
+    <section class="assessment-panel"><p class="eyebrow">Read the judgement with the reason</p><h2>How much can we take from it?</h2><span class={`assessment-label assessment-${record.strength}`}><span aria-hidden="true">◈</span> {labelFor(STRENGTHS,record.strength)} <small>example assessment</small></span><p>{record.strengthReason}</p><p class="small">This label is supplied in the example register. The website does not calculate certainty or rank forms of knowledge.</p></section>
+    <section class="record-section"><h2>Where are the limits?</h2><ul class="plain-list">{record.limitations.map(limit=><li>{limit}</li>)}</ul></section>
+    <section class="record-section"><h2>Using the learning</h2>{record.useNotes.map(note=><p>{note}</p>)}</section>
+    <section class="record-section methods-section"><h2>How the example is framed</h2><h3>Methods</h3><p>{record.methods}</p><h3>Sample and context</h3><p>{record.sampleContext}</p></section>
+  </div><aside class="record-sidebar"><div class="record-facts"><p class="eyebrow">At a glance</p><dl><div><dt>Knowledge type</dt><dd>{labelFor(TYPES,record.evidenceType)}</dd></div><div><dt>Place</dt><dd>{record.places.map(p=>labelFor(PLACES,p)).join(' · ')}</dd></div><div><dt>Population</dt><dd>{record.populations.map(p=>labelFor(POPULATIONS,p)).join(' · ')}</dd></div><div><dt>Programme</dt><dd>{record.programme}</dd></div><div><dt>Produced by</dt><dd>{record.producer}</dd></div><div><dt>Funded by</dt><dd>{record.funder}</dd></div></dl><a class="button button-primary" href={`/sources/${record.id}/`}>View example source <Icon name="book" size={18}/></a><p class="small">A local, fictional source sheet — not a real publication.</p></div><div class="sidebar-question"><Icon name="people" size={26}/><h3>Whose voice is missing?</h3><p>Consider who contributed, who may not be represented, and what other knowledge could change the picture.</p><a class="text-link" href="/map/">Explore the map <Icon size={17}/></a></div></aside></div>
+  <section class="section related-section"><div class="container"><div class="section-heading"><div><p class="eyebrow">Keep exploring</p><h2>Other perspectives on this theme</h2></div></div><div class="related-grid">{related.map(r=><EvidenceCard record={r}/>)}</div></div></section>
+  <script>
+    import { filtersFromParams, paramsFromFilters } from '../../lib/catalogue';
+    const from = new URLSearchParams(location.search).get('from');
+    if (from) {
+      try {
+        const url = new URL(from, location.origin);
+        if (url.origin === location.origin && ['/evidence/', '/map/'].includes(url.pathname)) {
+          const query = paramsFromFilters(filtersFromParams(url.searchParams)).toString();
+          const link = document.querySelector<HTMLAnchorElement>('[data-back]')!;
+          link.href = url.pathname + (query ? `?${query}` : '');
+          link.querySelector('[data-back-label]')!.textContent = url.pathname === '/map/' ? 'Back to your evidence map' : 'Back to your results';
+        }
+      } catch { /* Invalid return URLs fall back to the library. */ }
+    }
+  </script>
+</Layout>

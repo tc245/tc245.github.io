@@ -1,0 +1,21 @@
+services:
+  web:
+    image: ${DEMO_IMAGE:-evidence-hub-demo:local}
+    build:
+      context: .
+    restart: unless-stopped
+    environment:
+      DEMO_HOST: ${DEMO_HOST:-localhost}
+    ports:
+      - "${BIND_ADDRESS:-0.0.0.0}:${HTTP_PORT:-80}:80"
+      - "${BIND_ADDRESS:-0.0.0.0}:${HTTPS_PORT:-443}:443"
+      # Optional HTTP/3: also allow this UDP port through the host firewall/NSG.
+      # - "${BIND_ADDRESS:-0.0.0.0}:${HTTPS_PORT:-443}:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:

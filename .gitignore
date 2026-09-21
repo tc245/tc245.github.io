@@ -1,0 +1,8 @@
+node_modules/
+.analysis-venv/
+dist/
+.astro/
+.env
+playwright-report/
+test-results/
+*.log

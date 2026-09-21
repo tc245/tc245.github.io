@@ -1,0 +1,22 @@
+---
+import type { FoodStudy, FoodSynthesis } from '../lib/learning-types';
+interface Props { studies: FoodStudy[]; synthesis: FoodSynthesis; }
+const { studies, synthesis } = Astro.props;
+const xmin=.65, xmax=2.3, left=245, right=655;
+const x=(rr:number)=>left+(Math.log(rr)-Math.log(xmin))/(Math.log(xmax)-Math.log(xmin))*(right-left);
+const height=130+studies.length*48;
+const poolY=studies.length*48+65;
+const ticks=[.75,1,1.25,1.5,2];
+---
+<div class="forest-scroll" role="region" tabindex="0" aria-label={`${synthesis.label} forest plot. Scroll horizontally on small screens.`}>
+  <svg class="forest-plot" viewBox={`0 0 850 ${height}`} role="img" aria-labelledby={`plot-title-${synthesis.id} plot-description-${synthesis.id}`}>
+    <title id={`plot-title-${synthesis.id}`}>Synthetic risk ratios and 95% confidence intervals: {synthesis.label}</title>
+    <desc id={`plot-description-${synthesis.id}`}>Each square marks a study risk ratio. Horizontal lines mark confidence intervals. A diamond marks the pooled result. The vertical line at 1 means no difference. Exact values and sources are in the table below. Equal-size study markers do not show analysis weights.</desc>
+    <text x="14" y="22" class="plot-column">Fictional study</text><text x="700" y="22" class="plot-column">RR (95% CI)</text>
+    <line x1={x(1)} x2={x(1)} y1="34" y2={height-45} class="null-line"/>
+    {studies.map((study,i)=>{const y=55+i*48;return <g><text x="14" y={y+4} class="plot-study">Trial {study.id.slice(2,4)} · {study.year}</text><text x="125" y={y+4} class="plot-bias">{study.riskOfBias === 'high'?'High risk':study.riskOfBias === 'low'?'Low risk':'Some concerns'}</text><line x1={x(study.effect.ciLow)} x2={x(study.effect.ciHigh)} y1={y} y2={y} class="study-ci"/><line x1={x(study.effect.ciLow)} x2={x(study.effect.ciLow)} y1={y-4} y2={y+4} class="study-ci"/><line x1={x(study.effect.ciHigh)} x2={x(study.effect.ciHigh)} y1={y-4} y2={y+4} class="study-ci"/><rect x={x(study.effect.rr)-5} y={y-5} width="10" height="10" class:list={['study-point', {'high-risk-point':study.riskOfBias==='high'}]}/><text x="700" y={y+4} class="plot-result">{study.effect.rr.toFixed(2)} ({study.effect.ciLow.toFixed(2)}–{study.effect.ciHigh.toFixed(2)})</text></g>})}
+    <g data-pooled-row><line x1="14" x2="835" y1={poolY-22} y2={poolY-22} class="plot-divider"/><text x="14" y={poolY+4} class="plot-study pooled-text">Pooled estimate</text><polygon points={`${x(synthesis.ciLow)},${poolY} ${x(synthesis.rr)},${poolY-9} ${x(synthesis.ciHigh)},${poolY} ${x(synthesis.rr)},${poolY+9}`} class="pooled-diamond"/><text x="700" y={poolY+4} class="plot-result pooled-text">{synthesis.rr.toFixed(2)} ({synthesis.ciLow.toFixed(2)}–{synthesis.ciHigh.toFixed(2)})</text></g>
+    <line x1={left} x2={right} y1={height-36} y2={height-36} class="plot-axis"/>{ticks.map(tick=><g><line x1={x(tick)} x2={x(tick)} y1={height-36} y2={height-31} class="plot-axis"/><text x={x(tick)} y={height-13} text-anchor="middle" class="plot-tick">{tick}</text></g>)}
+  </svg>
+</div>
+<p class="chart-caption">Risk ratio · logarithmic scale · 1 = no difference · values above 1 indicate more basket purchasing in the fictional intervention arm. Square sizes are equal; they do not represent statistical weights.</p>

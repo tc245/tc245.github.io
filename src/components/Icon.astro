@@ -1,0 +1,19 @@
+---
+interface Props { name?: string; size?: number; }
+const { name = 'arrow', size = 20 } = Astro.props;
+const paths: Record<string, string> = {
+  arrow: 'M4 12h15m-6-6 6 6-6 6',
+  search: 'm20 20-5-5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z',
+  grid: 'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z',
+  book: 'M12 6v15M3 4c4-1 7 0 9 2 2-2 5-3 9-2v15c-4-1-7 0-9 2-2-2-5-3-9-2Z',
+  leaf: 'M5 19C-1 7 12 2 21 3c0 10-6 20-16 16Zm0 0L16 8',
+  people: 'M15 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM5 21v-3a7 7 0 0 1 14 0v3M20 4a3 3 0 0 1 0 6M22 21v-4a5 5 0 0 0-2-4',
+  work: 'M8 7V4h8v3M3 7h18v14H3zM3 12c6 3 12 3 18 0M10 13v3h4v-3',
+  sun: 'M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM12 1v3M12 20v3M1 12h3M20 12h3M4 4l2 2M18 18l2 2M4 20l2-2M18 6l2-2',
+  info: 'M12 11v6M12 7v1M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z',
+  check: 'm5 12 4 4L19 6',
+  location: 'M19 9c0 6-7 12-7 12S5 15 5 9a7 7 0 1 1 14 0ZM14 9a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z',
+  download: 'M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5',
+};
+---
+<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={paths[name] ?? paths.arrow}/></svg>

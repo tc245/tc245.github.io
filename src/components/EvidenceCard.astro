@@ -1,0 +1,14 @@
+---
+import Icon from './Icon.astro';
+import { TYPES, THEMES, STRENGTHS, PLACES, labelFor, type PublicEvidence } from '../lib/catalogue';
+interface Props { record: PublicEvidence; }
+const { record } = Astro.props;
+const title = record.title.replace(/^Illustrative:\s*/i, '');
+---
+<article class="evidence-card" data-record-id={record.id}>
+  <div class="card-meta"><span class:list={['type-label', `type-${record.evidenceType}`]}><span class="type-dot"></span>{labelFor(TYPES, record.evidenceType)}</span><span>{record.year} <span aria-hidden="true">·</span> Fictional record</span></div>
+  <h3><a data-record-link href={`/evidence/${record.id}/`}>{title}<span class="card-arrow"><Icon /></span></a></h3>
+  <p class="card-summary">{record.summary.replace(/^Fictional illustration:\s*/i, '')}</p>
+  <div class="card-tags">{record.themes.map(theme => <span>{labelFor(THEMES, theme)}</span>)}</div>
+  <div class="card-bottom"><span class:list={['assessment-label', `assessment-${record.strength}`]}><span aria-hidden="true">◈</span> {labelFor(STRENGTHS, record.strength)} <small>example assessment</small></span><span class="card-place"><Icon name="location" size={15}/>{record.places.map(place => labelFor(PLACES, place)).join(' & ')}</span></div>
+</article>

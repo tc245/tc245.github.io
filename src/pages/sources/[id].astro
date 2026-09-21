@@ -1,0 +1,11 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Icon from '../../components/Icon.astro';
+import { publicRecords } from '../../lib/evidence';
+export function getStaticPaths() { return publicRecords.map(record => ({params:{id:record.id},props:{record}})); }
+const { record } = Astro.props;
+---
+<Layout title={`Example source · ${record.title}`}>
+  <div class="container record-top"><a class="back-link" href={`/evidence/${record.id}/`}>← Back to the evidence record</a></div>
+  <article class="container source-page"><p class="eyebrow">Example source sheet · {record.year}</p><h1>{record.title}</h1><div class="fiction-notice"><Icon name="info"/><p><strong>Demonstration material, not an original study.</strong> This page shows how a source could be reached from an evidence record. There is no underlying research report, DOI or real study behind this example.</p></div><dl class="source-metadata"><div><dt>Example producer</dt><dd>{record.producer}</dd></div><div><dt>Example funder</dt><dd>{record.funder}</dd></div><div><dt>Record identifier</dt><dd>{record.id}</dd></div></dl><h2>Example abstract</h2><p>{record.summary}</p><h2>Illustrative methods</h2><p>{record.methods}</p><p>{record.sampleContext}</p><h2>Illustrative observations</h2><ul class="plain-list">{record.findings.map(f=><li>{f}</li>)}</ul><h2>Limitations</h2><ul class="plain-list">{record.limitations.map(l=><li>{l}</li>)}</ul><div class="source-end"><p>In the proposed Hub, this link would lead to a released source document or an accessible HTML version, with a PDF alongside where available.</p><a class="text-link" href={`/evidence/${record.id}/`}>Return to the summary and assessment <Icon /></a></div></article>
+</Layout>
